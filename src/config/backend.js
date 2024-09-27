@@ -1,0 +1,1 @@
+export const backendurl=" https://www.tripwaly.com";
