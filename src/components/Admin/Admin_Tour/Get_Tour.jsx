@@ -1,177 +1,93 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { backendurl } from '../../../config/backend';
-import { useSelector } from 'react-redux';
-import { Card, Button } from 'react-bootstrap';
-import Edit_Tour from './Edit_Tour';
-import { toast, ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+
 const Get_Tour = () => {
-  const navigate = useNavigate();
-  const [tours, setTours] = useState([]);
-  const [schedules, setSchedules] = useState([]); // Store tour schedules here
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedTour, setSelectedTour] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const user = useSelector((state) => state.auth.login);
-  useEffect(() => {
-    fetchToursAndSchedules();
-  }, []);
+    const [tourSchedules, setTourSchedules] = useState([]);
+    const [tourFaqs, setTourFaqs] = useState([]);
 
-  const fetchToursAndSchedules = async () => {
-    try {
-      // Fetch all tours
-      const tourResponse = await axios.get(`https://www.tripwaly.com/api/tour/get`);
-      setTours(tourResponse.data);  // Set the fetched tours data
+    useEffect(() => {
+        // Fetch Tour Schedules
+        const fetchTourSchedules = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/tour/schedule/get');
+                setTourSchedules(response.data); // Set the fetched tour schedules data
+            } catch (error) {
+                console.error('Error fetching tour schedules', error);
+            }
+        };
 
-      // Fetch all tour schedules
-      const tourScheduleResponse = await axios.get(`https://www.tripwaly.com/api/tour/schedule/get`);
-      setSchedules(tourScheduleResponse.data);  // Set the fetched schedules data
-    } catch (err) {
-      console.error('Error fetching tours and schedules:', err);
-      toast.error('Error fetching tours and schedules');
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+        // Fetch Tour FAQs
+        const fetchTourFaqs = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/tour/faqs/get');
+                setTourFaqs(response.data); // Set the fetched FAQs data
+            } catch (error) {
+                console.error('Error fetching tour FAQs', error);
+            }
+        };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  
-  // Filter tours where the admin or company email matches the current user's email
-  const filteredTours = tours.filter(tour => {
-    const adminMatch = tour.admin && tour.admin.email === user.email;
-    const companyMatch = tour.company && tour.company.email === user.email;
-    return adminMatch || companyMatch;
-  });
+        fetchTourSchedules();
+        fetchTourFaqs();
+    }, []);
 
-  const handleEdit = (tour) => {
-    setSelectedTour(tour);
-    setShowEditModal(true);
-  };
+    return (
+        <div>
+            {/* Check if tourSchedules exist and map through the data */}
+            {tourSchedules && tourSchedules.map(scheduleGroup => (
+                <div key={scheduleGroup._id} className="tour-schedule">
+                    {/* Display tour information */}
+                    <h1>Tour images</h1>
+                    <div className="tour-images">
+                        {scheduleGroup.tourid.images && scheduleGroup.tourid.images.length > 0 ? (
+                            scheduleGroup.tourid.images.map((image, index) => (
+                                <img key={index} src={image} alt={`Tour ${scheduleGroup.tourid.title} Image ${index}`} style={{ width: '200px', height: 'auto', marginRight: '10px' }} />
+                            ))
+                        ) : (
+                            <p>No images available for this tour.</p>
+                        )}
+                    </div>
 
-  const handleClose = () => {
-    setShowEditModal(false);
-    setSelectedTour(null);
-  };
+                    <h3>{scheduleGroup.tourid.title}</h3>
+                    <p>{scheduleGroup.tourid.description}</p>
+                    <p>From: {scheduleGroup.tourid.fromcity} To: {scheduleGroup.tourid.tocity}</p>
+                    <p>Distance: {scheduleGroup.tourid.distance}</p>
+                    <p>Price: {scheduleGroup.tourid.price}</p>
+                    <button>Update tour</button>
+                    {/* Display each schedule under the tour */}
+                    <h4>Schedules:</h4>
+                    {scheduleGroup.schedules.map(schedule => (
+                        <div key={schedule._id} className="schedule-item">
+                            <p>Title: {schedule.title}</p>
+                            <p>Description: {schedule.description}</p>
+                            <p>Time: {schedule.time}</p>
+                            <p>City: {schedule.city}</p>
+                            {/* Display schedule image if available */}
+                            {schedule.images && <img src={schedule.images} alt="Schedule" style={{ width: '100px', height: 'auto' }} />}
+                            <button>Update tour schedule</button>
+                        </div>
+                    
+                    ))}
 
-  return (
-    <div>
-      <ToastContainer />
-      <button className='btn btn-warning' onClick={() => navigate('/admin/dashboard/create/tour')}>Create Tour</button>
-      <h1>Available Tours</h1>
-      <div className="tour-list">
-        {filteredTours.map(tour => {
-          // Find the schedule that matches the current tour's _id
-          // const matchedSchedule = schedules.find(schedule => schedule.tourid._id === tour._id);
-          return (
-            <Card key={tour._id} className="mb-3">
-              <Card.Body>
-                <Card.Title>{tour.title}</Card.Title>
-                <Card.Text>{tour.description}</Card.Text>
-                <Card.Text>From City: {tour.fromcity}</Card.Text>
-                <Card.Text>To City: {tour.tocity}</Card.Text>
-                <Card.Text>Distance: {tour.distance}</Card.Text>
-                <Card.Text>Location: {tour.location}</Card.Text>
-                <Card.Text>Price: {tour.price} PKR</Card.Text>
-                <Card.Text>Postcode: {tour.postcode}</Card.Text>
-                <Card.Text>Latitude: {tour.latitude}</Card.Text>
-                <Card.Text>Longitude: {tour.longitude}</Card.Text>
-                <Card.Text>Duration: {tour.duration}</Card.Text>  
-                {/* Images section */}
-                {tour.images && tour.images.length > 0 && (
-                  <div>
-                    <strong>Images:</strong>
-                    <ul>
-                      {tour.images.map((image, index) => (
-                        <li key={index}>
-                         {/* <img src={`https://www.tripwaly.com${image}`} alt={`Image ${index + 1}`} style={{ width: '100px', height: 'auto' }} />
-                */}
-                          <img src={`https://www.tripwaly.com${image}`} alt={`Image ${index + 1}`} style={{ width: '100px', height: 'auto' }} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {/* Tags section */}
-                {tour.tags && tour.tags.length > 0 && (
-                  <div>
-                    <strong>Tags:</strong>
-                    <ul>
-                       {tour.tags.map((tag, index) => (
-                        <li key={index}>{tag}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Categories section */}
-                {tour.category && tour.category.length > 0 && (
-                  <div>
-                    <strong>Categories:</strong>
-                    <ul>
-                      {tour.category.map((cat, index) => (
-                        <li key={index}>{cat.title} - {cat.description}</li>
-                      ))}
-                    </ul>
-                    <div className="d-flex gap-4">
-                  <Button variant="warning" onClick={() => handleEdit(tour)}>Edit Tour</Button>
+                    {/* Compare and Display FAQs if the tour._id matches */}
+                    <h4>Tour FAQs:</h4>
+                    {tourFaqs && tourFaqs.map(faq => (
+                        faq.tour._id === scheduleGroup.tourid._id && (
+                            <div key={faq._id} className="tour-faq">
+                                {faq.TourFAQS.map(faqItem => (
+                                    <div key={faqItem._id}>
+                                        <p><strong>Q:</strong> {faqItem.question}</p>
+                                        <p><strong>A:</strong> {faqItem.answer}</p>
+                                        <button className='mb-3'>Update faqs</button>
+                    
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    ))}
                 </div>
-
-                  </div>
-
-)}
-
-                {/* Display matching tour schedule
-                {matchedSchedule && (
-  <div>
-    <h5>Tour Schedule</h5>
-    {matchedSchedule.schedules.map((schedule, index) => (
-      <div key={index}>
-        <p><strong>Title:</strong> {matchedSchedule._id}</p>
-        
-        <p><strong>Title:</strong> {schedule.title}</p>
-        <p><strong>Description:</strong> {schedule.description}</p>
-        <p><strong>Time:</strong> {schedule.time}</p>
-        <p><strong>City:</strong> {schedule.city}</p>
-        <p><strong>Latitude:</strong> {schedule.lat}</p>
-        <p><strong>Longitude:</strong> {schedule.long}</p>
-        {schedule.images && schedule.images.length > 0 && (
-          <div>
-            <strong>Schedule Images:</strong>
-            {schedule.images.map((image, idx) => (
-              <img
-                key={idx}
-                src={image}
-                alt={`Schedule Image ${idx + 1}`}
-                style={{ width: '80px', height: 'auto', marginRight: '10px' }}
-              />
             ))}
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-)} */}
-
-              </Card.Body>
-            </Card>
-          );
-        })}
-      </div>
-
-      {selectedTour && (
-        <Edit_Tour
-          show={showEditModal}
-          handleClose={handleClose}
-          tourData={selectedTour}
-          onUpdate={fetchToursAndSchedules} // Pass the update callback
-        />
-      )}
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Get_Tour;

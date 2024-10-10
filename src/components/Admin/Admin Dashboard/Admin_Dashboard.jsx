@@ -7,11 +7,28 @@ import CompanyDetails from '../Admin_Tour/CompanyDetails';
 import UserDetails from '../Admin_Tour/UserDetails';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import Update_Gallery from '../Admin_Tour/Update_Gallery';
+import Get_Tour from '../Admin_Tour/Get_Tour';
+import BookingDetails from '../BookingDetails';
+import MediaDetails from '../Admin_Tour/MediaDetails';
 const Admin_Dashboard = () => {
  const navigate=useNavigate();
       return (
     <div className='container'>     
+<div>
+      <Subtitle subtitle={"Tours"} />
+    
+<Button onClick={()=>navigate('/admin/dashboard/create/tour')}> Create Tour</Button>
+<Get_Tour />
+</div>
+<div>
+      <Subtitle subtitle={"Booking Details"} />
+    
+<h1>Booking Details</h1>
+<BookingDetails />
+</div>
      <div>
+
       <Subtitle subtitle={"Company "} />
 <h2>Companies Detail</h2>
 <CompanyDetails />
@@ -33,18 +50,21 @@ const Admin_Dashboard = () => {
 </div>
       <div>
       <Subtitle subtitle={"Experience"} />
-    
 <h2>Statistics List</h2>
-
+<StatisticsList />
 </div>
 
 <div>
-      <Subtitle subtitle={"Tours"} />
-    
-<Button onClick={()=>navigate('/admin/dashboard/create/tour')}>Tour details</Button>
-
-<Button onClick={()=>navigate('/tours/gallery')}>Gallery</Button>
+      <Subtitle subtitle={"Gallery"} />
+<h2>Gallery</h2>
+<Update_Gallery />
 </div>
+<div>
+      <Subtitle subtitle={"Media"} />
+<h2>Media</h2>
+<MediaDetails />
+</div>
+
     </div>
   )
 }

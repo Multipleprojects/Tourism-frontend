@@ -19,7 +19,7 @@ const Home = () => {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios.get('https://www.tripwaly.com/api/statistic/get');
+      const response = await axios.get('http://localhost:8000/api/statistic/get');
       if (response.data.length > 0) {
         setStats(response.data[0]); // Assuming you only have one set of statistics
       }
@@ -30,7 +30,7 @@ const Home = () => {
 
   const fetchTourOperator = async () => {
     try {
-      const response = await axios.get('https://www.tripwaly.com/api/touroperator/get');
+      const response = await axios.get('http://localhost:8000/api/touroperator/get');
       if (response.data && response.data.length > 0) {
         setDescription(response.data[0].description || 'No description available.');
       } else {
@@ -100,19 +100,19 @@ const Home = () => {
   <React.Fragment key={media._id}>
     <Col lg="2">
       <div className="hero__img-box">
-        <img src={`http://localhost:8000/${media.img1}`} alt="" />
+        <img src={`${media.img1}`} alt="" />
       </div>
     </Col>
 
     <Col lg="2">
       <div className="hero__img-box mt-4">
-        <video src={`http://localhost:8000/${media.video1}`} controls />
+        <video src={`${media.video1}`} controls />
       </div>
     </Col>
 
     <Col lg="2">
       <div className="hero__img-box mt-5">
-        <img src={`http://localhost:8000/${media.img2}`} alt="" 
+        <img src={`${media.img2}`} alt="" 
         />
       </div>
     </Col>

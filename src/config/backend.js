@@ -1,1 +1,1 @@
-export const backendurl=" https://www.tripwaly.com";
+export const backendurl=" http://localhost:8000";

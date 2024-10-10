@@ -18,38 +18,74 @@ const navigate=useNavigate();
     phoneNumber: "",
     companyAddress: "",
     description: "",
-  active:false
   });
+
+  const [previewImage, setPreviewImage] = useState(userIcon);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
-  const handleClick = async (e) => {
-    e.preventDefault();
-    if (!credentials.phoneNumber || credentials.phoneNumber.length < 11) {
-      toast.error("Phone number must contain at least 11 digits");
-      return;
-    }
-  
-    if (!credentials.password || credentials.password.length <= 6) {
-      toast.error("Password must contain more than 6 characters");
-      return;
-    }
-
-    try {
-      const res = await axios.post(`https://www.tripwaly.com/api/company/create`, credentials);
-      toast.success(res.data); // Show success message
-    navigate('/company/login')
-    } catch (error) {
-      toast.error(
-        error.response?.data || "Error creating company. Please try again."
-      );
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file));
+      setCredentials((prev) => ({ ...prev, images: file }));
     }
   };
+
+    // Check if a file is selected
+   const handleClick = async (e) => {
+  e.preventDefault();
+  
+  // Create FormData to handle file and other form data
+  const formData = new FormData();
+  formData.append("name", credentials.name);
+  formData.append("companyName", credentials.companyName);
+  formData.append("email", credentials.email);
+  formData.append("password", credentials.password);
+  formData.append("phoneNumber", credentials.phoneNumber);
+  formData.append("companyAddress", credentials.companyAddress);
+  formData.append("description", credentials.description);
+
+  if (selectedFile) {
+    formData.append("images", selectedFile); // Attach the image file
+  }
+
+  try {
+    const res = await axios.post(`http://localhost:8000/api/company/create`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    toast.success(res.data.message); // Show success message
+    navigate('/company/login');
+  } catch (error) {
+    toast.error(
+      error.response?.data || "Error creating company. Please try again."
+    );
+  }
+};
+ 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleImageClick = () => {
+    document.getElementById("imagesInput").click();
+  };
+  const fileChangeHandler = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result); // Set the preview image as a base64 string
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+      setSelectedFile(file); // Store the selected file
+    }
   };
   return (
     <section>
@@ -68,6 +104,29 @@ const navigate=useNavigate();
                 </div>
                 <h2>Company</h2>
                 <Form onSubmit={handleClick}>
+                <FormGroup>
+                    <div className="text-center">
+                      <img
+                        src={previewImage}
+                        height="100px"
+                        width="100px"
+                        alt="Profile Preview"
+                        onClick={handleImageClick}
+                       
+                     style={{ cursor: "pointer", borderRadius: "50%", objectFit: "cover",cursor: "pointer" }}
+  
+                    />
+                      <input
+                        type="file"
+                        id="imagesInput"
+                        accept="image/*"
+                        style={{ display: "none" }} // Hide the actual file input      
+                   onChange={fileChangeHandler}
+                  
+            
+          />
+                    </div>
+                  </FormGroup>
 
                   <FormGroup>
                     <input
@@ -102,7 +161,7 @@ const navigate=useNavigate();
                   <FormGroup>
                     <div className="password__input">
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type="password"
                         placeholder="Password"
                         id="password"
                         required
@@ -119,7 +178,7 @@ const navigate=useNavigate();
 
                   <FormGroup>
                     <input
-                      type="text"
+                      type="number"
                       placeholder="Phone Number"
                       id="phoneNumber"
                       required

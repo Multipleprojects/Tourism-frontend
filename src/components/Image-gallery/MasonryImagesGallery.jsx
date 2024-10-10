@@ -25,7 +25,7 @@ const MasonryImagesGallery = () => {
         {galleryImages.map((item, index) => (
           <img
             className="masonry__img"
-            src={`http://localhost:8000/${item.replace(/\\/g, "/")}`} // Replace backslashes with forward slashes
+            src={`${item.replace(/\\/g, "/")}`} // Replace backslashes with forward slashes
           
             key={index}
             alt={`Gallery Image ${index}`}

@@ -39,7 +39,7 @@ const [tourRating, setTourRating] = useState(0);
       navigate("/login");
       return;
     }
-   const response = await axios.post('https://www.tripwaly.com/api/user/review/create', formData, {
+   const response = await axios.post('http://localhost:8000/api/user/review/create', formData, {
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

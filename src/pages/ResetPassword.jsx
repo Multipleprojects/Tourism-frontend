@@ -10,7 +10,7 @@ const ResetPassword = ({ isOpen, toggle }) => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://www.tripwaly.com/api/user/updatepassword', { email });
+      const response = await axios.post('http://localhost:8000/api/user/updatepassword', { email });
       toast.success(response.data.message);
       toggle(); // Close modal after success
     } catch (error) {

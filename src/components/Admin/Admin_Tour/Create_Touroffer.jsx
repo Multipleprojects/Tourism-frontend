@@ -17,7 +17,7 @@ const Create_Touroffer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://www.tripwaly.com/api/offer/create', offers);
+      const response = await axios.post('http://localhost:8000/api/offer/create', offers);
       console.log(response.data);
     } catch (error) {
       console.error('Failed to submit offers:', error);

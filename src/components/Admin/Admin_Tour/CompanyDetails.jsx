@@ -17,7 +17,7 @@ const CompanyDetails = () => {
   });
 
   useEffect(() => {
-    axios.get('https://www.tripwaly.com/api/company/get')
+    axios.get('http://localhost:8000/api/company/get')
       .then(response => {
         setCompanies(response.data);
       })
@@ -56,12 +56,12 @@ const CompanyDetails = () => {
     e.preventDefault();
     
 
-    axios.put(`https://www.tripwaly.com/api/company/update/${selectedCompanyId}`, companyData, 
+    axios.put(`http://localhost:8000/api/company/update/${selectedCompanyId}`, companyData, 
 )
     .then(response => {
         console.log('Company updated successfully:', response.data);
         setShowModal(false); // Close the modal after update
-        return axios.get('https://www.tripwaly.com/api/company/get', {
+        return axios.get('http://localhost:8000/api/company/get', {
          
         });
     })

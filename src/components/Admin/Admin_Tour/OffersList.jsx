@@ -9,7 +9,7 @@ const OffersList = () => {
 
   useEffect(() => {
     axios
-      .get('https://www.tripwaly.com/api/offer/get')
+      .get('http://localhost:8000/api/offer/get')
       .then((response) => {
         console.log('Backend response:', response.data); // Log the full response for inspection
   
@@ -56,7 +56,7 @@ const OffersList = () => {
   
       // Construct the PUT request URL using both IDs
       const response = await axios.put(
-        `https://www.tripwaly.com/api/offer/${selectedOffer.mainDocId}/${selectedOffer._id}`,
+        `http://localhost:8000/api/offer/${selectedOffer.mainDocId}/${selectedOffer._id}`,
         {
           title: selectedOffer.title,
           description: selectedOffer.description,

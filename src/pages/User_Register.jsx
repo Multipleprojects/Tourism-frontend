@@ -35,41 +35,35 @@ const User_Register = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    
-    // Check if a file is selected
-    if (!selectedFile) {
-      toast.error("Please select a profile image");
-      return;
-    }
   
-    if (!credentials.phone || credentials.phone.length < 11) {
-      toast.error("Phone number must contain at least 11 digits");
-      return;
-    }
-  
-    if (!credentials.password || credentials.password.length <= 6) {
-      toast.error("Password must contain more than 6 characters");
-      return;
-    }
-  
+    // Create FormData to handle file and other form data
     const formData = new FormData();
+    
     formData.append("name", credentials.username);
     formData.append("email", credentials.email);
     formData.append("password", credentials.password);
     formData.append("phone", credentials.phone);
+  
     if (selectedFile) {
-      formData.append("images", selectedFile);
+      formData.append("images", selectedFile); // Attach the image file correctly
     }
   
     try {
-      const res = await axios.post(`https://www.tripwaly.com/api/user/create`, formData);
+      const res = await axios.post(`http://localhost:8000/api/user/create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
       toast.success(res.data); // Show success message
-      navigate("/user/login");
+      navigate('/user/login');
     } catch (error) {
-      toast.error(error.response?.data || "Error creating account. Please try again.");
+      toast.error(
+        error.response?.data || "Error creating company. Please try again."
+      );
     }
   };
-  
+   
  
 
   const handleImageClick = () => {
@@ -103,29 +97,25 @@ const User_Register = () => {
                 </div>
                 <h2 className="p-0 m-2 pb-4 m-lg-0 m-md-0 m-lg-m-0">Register</h2>
                 <Form onSubmit={handleClick}>
-                  <FormGroup>
-                    <div className="text-center">
-                      <img
-                        src={previewImage}
-                        height="100px"
-                        width="100px"
-                        alt="Profile Preview"
-                        onClick={handleImageClick}
-                       
-                     style={{ cursor: "pointer", borderRadius: "50%", objectFit: "cover",cursor: "pointer" }}
-  
-                    />
-                      <input
-                        type="file"
-                        id="profileImageInput"
-                        accept="image/*"
-                        style={{ display: "none" }} // Hide the actual file input      
-                   onChange={fileChangeHandler}
-                  
-            
-          />
-                    </div>
-                  </FormGroup>
+                <FormGroup>
+  <div className="text-center">
+    <img
+      src={previewImage}
+      height="100px"
+      width="100px"
+      alt="Profile Preview"
+      onClick={handleImageClick}
+      style={{ cursor: "pointer", borderRadius: "50%", objectFit: "cover" }}
+    />
+    <input
+      type="file"
+      id="imagesInput"
+      accept="image/*"
+      style={{ display: "none" }} // Hide the actual file input
+      onChange={fileChangeHandler} // Correctly handle file selection
+    />
+  </div>
+</FormGroup>
 
                   <FormGroup>
                     <input

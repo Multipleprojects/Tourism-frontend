@@ -41,7 +41,7 @@ const Company_Login = () => {
     }
 
     try {
-      const response = await axios.post('https://www.tripwaly.com/api/company/login', credentials);
+      const response = await axios.post('http://localhost:8000/api/company/login', credentials);
       toast.error("Given email and password are correct click Login button")
     
     } catch (error) {
@@ -63,7 +63,7 @@ const Company_Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const resCompany = await axios.post(`https://www.tripwaly.com/api/company/login`, credentials);
+      const resCompany = await axios.post(`http://localhost:8000/api/company/login`, credentials);
       const { message: userMessage, token: userToken } = resCompany.data;
         // Store token in localStorage
         localStorage.setItem('authToken', userToken);  
@@ -105,7 +105,7 @@ const Company_Login = () => {
     return;
   }
         try {
-          await axios.put(`https://www.tripwaly.com/api/company/updatepassword/${userId}`, { password: newPassword });
+          await axios.put(`http://localhost:8000/api/company/updatepassword/${userId}`, { password: newPassword });
           toast.success('Password updated successfully.');
           closeForgotPasswordModal(); // Close the modal after success
         } catch (error) {

@@ -42,7 +42,7 @@ const User_Login = () => {
     }
 
     try {
-      const response = await axios.post('https://www.tripwaly.com/api/user/login', credentials);
+      const response = await axios.post('http://localhost:8000/api/user/login', credentials);
     toast.error("Given email and password are correct click Login button")
        }
     catch (error) {
@@ -82,7 +82,7 @@ const User_Login = () => {
    return;
  }
     try {
-      const resUser = await axios.post(`https://www.tripwaly.com/api/user/login`, credentials);
+      const resUser = await axios.post(`http://localhost:8000/api/user/login`, credentials);
       const { message: userMessage, token: userToken } = resUser.data;
   
       // Store token in localStorage
@@ -123,7 +123,7 @@ if (!passwordRegex.test(credentials.password)) {
   return;
 }
       try {
-        await axios.put(`https://www.tripwaly.com/api/user/updatepassword/${userId}`, { password: newPassword });
+        await axios.put(`http://localhost:8000/api/user/updatepassword/${userId}`, { password: newPassword });
         toast.success('Password updated successfully.');
         closeForgotPasswordModal(); // Close the modal after success
       } catch (error) {

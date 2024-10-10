@@ -1,52 +1,44 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { useNavigate } from 'react-router-dom';
 const Create_TourSchedule = () => {
-  const Tourid = useSelector((state) => state.auth.tourid);
-  console.log(Tourid);
-
+  const navigate=useNavigate();
+  const tourId=useSelector((state)=>state.auth.tourid);
+  const [tourid, setTourid] = useState(tourId);
+  const [featured, setFeatured] = useState(false);
+  const [active, setActive] = useState(false);
   const [schedules, setSchedules] = useState([
-    { title: '', description: '', time: '', city: '', lat: '', long: '',images: [[]] }
+    { title: '', description: '', time: '', city: '', lat: '', long: '' },
   ]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // Handle form data changes for each schedule input
-  const handleInputChange = (index, event) => {
+  const handleScheduleChange = (index, event) => {
+    const { name, value, files } = event.target;
     const newSchedules = [...schedules];
-    newSchedules[index][event.target.name] = event.target.value;
+
+    if (name === "lat" || name === "long") {
+      newSchedules[index][name] = parseFloat(value);
+    } else {
+      newSchedules[index][name] = value;
+    }
+
     setSchedules(newSchedules);
   };
 
-  // Handle image selection for each schedule and each image input
-  const handleImageChange = (scheduleIndex, imageIndex, event) => {
-    const newSchedules = [...schedules];
-    const selectedImages = Array.from(event.target.files); // Convert FileList to Array
-    newSchedules[scheduleIndex].images[imageIndex] = selectedImages; // Add the selected images to the current image array
-    setSchedules(newSchedules);
+  const handleAddSchedule = () => {
+    setSchedules([...schedules, { title: '', description: '', time: '', city: '', lat: '', long: '' }]);
   };
 
-  // Add a new image input for each schedule
-  const addImageInput = (scheduleIndex) => {
-    const newSchedules = [...schedules];
-    newSchedules[scheduleIndex].images.push([]); // Add a new empty array for additional image inputs
-    setSchedules(newSchedules);
-  };
-
-  // Add a new schedule entry
-  const addSchedule = () => {
-    setSchedules([...schedules, { title: '', description: '', time: '', city: '', lat: '', long: '',images: [[]] }]);
-  };
-
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('tourid', Tourid);
-
-    // Append schedule data
+    formData.append('tourid', tourid);
+    formData.append('featured', featured);
+    formData.append('active', active);
+    if (selectedFile) {
+      formData.append('images', selectedFile);
+    }
     schedules.forEach((schedule, index) => {
       formData.append(`schedules[${index}][title]`, schedule.title);
       formData.append(`schedules[${index}][description]`, schedule.description);
@@ -54,151 +46,128 @@ const Create_TourSchedule = () => {
       formData.append(`schedules[${index}][city]`, schedule.city);
       formData.append(`schedules[${index}][lat]`, schedule.lat);
       formData.append(`schedules[${index}][long]`, schedule.long);
-      formData.append(`schedules[${index}][long]`, schedule.featured);
-      // Append images for each schedule
-      schedule.images.forEach((imageGroup, i) => {
-        imageGroup.forEach((image, imgIndex) => {
-          formData.append(`schedules[${index}][images][${i}][${imgIndex}]`, image);
-        });
-      });
+      if (schedule.images) {
+        formData.append(`schedules[${index}][images]`, schedule.images); // Append file
+      }
     });
 
     try {
-      await axios.post(`https://www.tripwaly.com/api/tour/schedule/create`, formData, {
-     
+      const response = await axios.post('http://localhost:8000/api/tour/schedule/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Tour schedule created successfully!');
+      navigate("/admin/dashboard/create/tour/faqs");
     } catch (error) {
-      toast.error('Error creating tour schedule: ' + error.message);
+      alert('Error creating tour schedule:', error.response.data);
     }
+  };
+  const fileChangeHandler = (e) => {
+    setSelectedFile(e.target.files[0]);
   };
 
   return (
-    <div className="container mt-4">
-      <form onSubmit={handleSubmit}>
-        <ToastContainer />
-        <h2 className="mb-4">Create Tour Schedule</h2>
+    <form onSubmit={handleSubmit}>
 
-        {schedules.map((schedule, index) => (
-          <div key={index} className="schedule-section mb-4">
-            <h4>Schedule {index + 1}</h4>
+      <div className="form-group form-check">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          checked={featured}
+          onChange={(e) => setFeatured(e.target.checked)}
+        />
+        <label className="form-check-label">Featured</label>
+      </div>
 
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label>Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  className="form-control"
-                  value={schedule.title}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label>Description</label>
-                <input
-                  type="text"
-                  name="description"
-                  className="form-control"
-                  value={schedule.description}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
-            </div>
 
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label>Time</label>
-                <input
-                  type="text"
-                  name="time"
-                  className="form-control"
-                  value={schedule.time}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label>City</label>
-                <input
-                  type="text"
-                  name="city"
-                  className="form-control"
-                  value={schedule.city}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
-            </div>
+      {schedules.map((schedule, index) => (
+        <div key={index} className="mb-4">
+          <h3>Schedule {index + 1}</h3>
 
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label>Latitude</label>
-                <input
-                  type="text"
-                  name="lat"
-                  className="form-control"
-                  value={schedule.lat}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label>Longitude</label>
-                <input
-                  type="text"
-                  name="long"
-                  className="form-control"
-                  value={schedule.long}
-                  onChange={(e) => handleInputChange(index, e)}
-                  required
-                />
-              </div>
+          <div className="form-row">
+            <div className="col">
+              <input
+                name="title"
+                value={schedule.title}
+                placeholder="Title"
+                className="form-control"
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+              />
             </div>
-          
-            <div className="form-group mb-3">
-              <label>Images</label>
-              {schedule.images.map((imageGroup, imgGroupIndex) => (
-                <div key={imgGroupIndex} className="image-input-group mb-2">
-                  <input
-                    type="file"
-                    className="form-control"
-                    multiple
-                    onChange={(e) => handleImageChange(index, imgGroupIndex, e)}
-                  />
-                  {imageGroup.length > 0 && (
-                    <ul className="list-unstyled mt-2">
-                      {imageGroup.map((image, imgIndex) => (
-                        <li key={imgIndex}>{image.name}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-              <button type="button" className="btn btn-secondary mt-2" onClick={() => addImageInput(index)}>
-                Add Another Image
-              </button>
+            <div className="col">
+              <input
+                name="description"
+                value={schedule.description}
+                placeholder="Description"
+                className="form-control"
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+              />
             </div>
-            <hr />
           </div>
-        ))}
 
-        <div className='d-flex gap-1'>
-          <button type="button" className="btn btn-secondary mb-3" onClick={addSchedule}>
-            Add Another Schedule
-          </button>
+          <div className="form-row mt-3">
+            <div className="col">
+              <input
+                name="time"
+                value={schedule.time}
+                placeholder="Time"
+                className="form-control"
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+              />
+            </div>
+            <div className="col">
+              <input
+                name="city"
+                value={schedule.city}
+                placeholder="City"
+                className="form-control"
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+              />
+            </div>
+          </div>
 
-          <button type="submit" className="btn btn-warning mb-3">
-            Create Tour Schedule
-          </button>
+          <div className="form-row mt-3">
+            <div className="col">
+              <input
+                name="lat"
+                value={schedule.lat}
+                placeholder="Latitude"
+                className="form-control"
+                onChange={(e) => handleScheduleChange(index, e)}
+                type="number"
+                required
+              />
+            </div>
+            <div className="col">
+              <input
+                name="long"
+                value={schedule.long}
+                placeholder="Longitude"
+                className="form-control"
+                type="number"
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group mt-3">
+            <label>Image:</label>
+            <div className="mt-3">
+            <input type="file" onChange={fileChangeHandler} />
+          </div>
+
+          </div>
         </div>
-      </form>
-    </div>
+      ))}
+
+      <button type="button" className="btn btn-secondary" onClick={handleAddSchedule}>Add Schedule</button>
+      <button type="submit" className="btn btn-primary mt-3">Create Tour Schedule</button>
+    </form>
   );
 };
 

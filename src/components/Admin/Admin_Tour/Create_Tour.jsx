@@ -8,8 +8,9 @@ import { setTourid } from '../../Redux Toolkit/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-
+import { useSelector } from 'react-redux';
 const Create_Tour = () => {
+  const role=useSelector((state)=>state.auth.login.role);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -35,12 +36,18 @@ const Create_Tour = () => {
   const [availableseats, setAvailableSeats] = useState('');
   const [category, setCategory] = useState([{ title: '', description: '' }]);
   const [tags, setTags] = useState(['']);
-  const [admin] = useState('66d7472a65f338606713a352');
+  const [admin,setAdmin] = useState();
   const [company, setCompany] = useState('');
-
+  useEffect(() => {
+    if (role === "admin") {
+      setAdmin(role);
+    } else if (role === "company") {
+      setCompany(role);
+    }
+  }, [role]);
   useEffect(() => {
   
-     axios.get(`https://www.tripwaly.com/api/tour/city/get`)
+     axios.get(`http://localhost:8000/api/tour/city/get`)
       .then(response => {
         const cityData = response.data[0].city;
         const cityOptions = cityData.map(city => ({ value: city, label: city }));
@@ -57,7 +64,11 @@ const Create_Tour = () => {
       setImages([...images, file]);
     }
   };
-
+  const handleDelete = (index) => {
+    const updatedImages = [...images]; // Create a copy of the images array
+    updatedImages.splice(index, 1); // Remove the image at the specific index
+    setImages(updatedImages); // Update the state with the new array
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,7 +113,7 @@ const Create_Tour = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`https://www.tripwaly.com/api/tour/create`, formDataToSend, {
+      const response = await axios.post(`http://localhost:8000/api/tour/create`, formDataToSend, {
       
         headers: {
           Authorization: `Bearer ${token}`,
@@ -415,13 +426,12 @@ const Create_Tour = () => {
           </button>
         </div>
         {/* Images */}
-
-        
 <label>Images:</label>
 {images.length > 0 &&
   images.map((image, index) => (
     <div key={index}>
-      <p>Image {index + 1}: {image.name}</p>
+      <p>Image {index + 1}:{image.name}</p>
+      <button onClick={() => handleDelete(index)}>Delete</button>
     </div>
   ))}
 

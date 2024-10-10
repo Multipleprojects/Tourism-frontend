@@ -16,7 +16,7 @@ const UserDetails = () => {
   });
 
   useEffect(() => {
-    axios.get('https://www.tripwaly.com/api/user/get')
+    axios.get('http://localhost:8000/api/user/get')
       .then(response => {
         setUsers(response.data);
       })
@@ -49,11 +49,11 @@ const UserDetails = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    axios.put(`https://www.tripwaly.com/api/user/update/${selectedUserId}`, userData)
+    axios.put(`http://localhost:8000/api/user/update/${selectedUserId}`, userData)
       .then(response => {
         console.log('User updated successfully:', response.data);
         setShowModal(false);
-        return axios.get('https://www.tripwaly.com/api/user/get');
+        return axios.get('http://localhost:8000/api/user/get');
       })
       .then(response => {
         setUsers(response.data);

@@ -12,7 +12,7 @@ const ServiceList = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("https://www.tripwaly.com/api/offer/get");
+        const response = await axios.get("http://localhost:8000/api/offer/get");
         if (response.data.length > 0) {
           setServices(response.data[0].offers); // Assuming offers are nested
         }
@@ -38,7 +38,7 @@ const ServiceList = () => {
 
   return (
     <>
-      {services.map((item, index) => {
+      {services && services.map((item, index) => {
         // Assign an image from servicesData based on the index
         const img = servicesData[index % servicesData.length].imgUrl;
 

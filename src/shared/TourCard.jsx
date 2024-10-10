@@ -24,7 +24,7 @@ const TourCard = () => {
 
   const fetchToursAndSchedules = async () => {
     try {
-      const tourResponse = await axios.get(`https://www.tripwaly.com/api/tour/schedule/get`);
+      const tourResponse = await axios.get(`http://localhost:8000/api/tour/schedule/get`);
       const fetchedTours = tourResponse.data; // Fetched tours and schedules
 
       // Filter based on conditions
@@ -66,7 +66,7 @@ const TourCard = () => {
                   <div>
                     <span>
                       <img
-                        src={`https://www.tripwaly.com/${tour.tourid.images[0]}`} // Assuming tour.tourid.images[0] contains the image URL
+                        src={`${tour.tourid.images[0]}`} // Assuming tour.tourid.images[0] contains the image URL
                         alt={`Image ${tour.tourid.images[0]}`}
                         style={{ width: '19rem', height: '14rem' }}
                       />

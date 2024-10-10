@@ -12,8 +12,8 @@ const Newsletter = () => {
 
   const handleSubscribe = async () => {
     try {
-      // const response = await axios.post('https://www.tripwaly.com/api/user/subscription/create', { email });
-      const response = await axios.post(`https://www.tripwaly.com/api/user/subscription/create`, { email });
+      // const response = await axios.post('http://localhost:8000/api/user/subscription/create', { email });
+      const response = await axios.post(`http://localhost:8000/api/user/subscription/create`, { email });
 
       if (response.status === 201) {
         toast.success(response.data.message);

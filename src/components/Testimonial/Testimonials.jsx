@@ -8,7 +8,7 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await axios.get('https://www.tripwaly.com/api/user/review/get');
+        const response = await axios.get('http://localhost:8000/api/user/review/get');
         setTestimonials(response.data);
       } catch (error) {
         console.error("Error fetching testimonials", error);
@@ -54,7 +54,7 @@ const Testimonials = () => {
           </p>
           <div className="d-flex align-items-center gap-4 mt-3">
             <img
-              src={`https://www.tripwaly.com/${testimonial.images}`} // Adjust URL based on your backend setup
+              src={`${testimonial.images}`} // Adjust URL based on your backend setup
               className="w-25 h-25 rounded-2"
               alt={testimonial.user?.name || 'User'} // Fallback to 'User' if name is not available
 

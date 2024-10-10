@@ -24,6 +24,7 @@ const Booking = ({ tourid, tourscheduleid, avgRating, tour }) => {
     elder: 0,
     number: '',
     fullname: '',
+  number:''
   });
   const serviceFeePerPerson = 10;
 
@@ -71,12 +72,12 @@ const Booking = ({ tourid, tourscheduleid, avgRating, tour }) => {
       navigate("/user/login");
       return;
     }
-if (!credentials.phone || credentials.phone.length < 11) {
+if (!credentials.number || credentials.number.length >= 11) {
       toast.error("Phone number must contain at least 11 digits");
       return;
     }
     try {
-      const response = await axios.post("https://www.tripwaly.com/api/user/booking/create", credentials, {
+      const response = await axios.post("http://localhost:8000/api/user/booking/create", credentials, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

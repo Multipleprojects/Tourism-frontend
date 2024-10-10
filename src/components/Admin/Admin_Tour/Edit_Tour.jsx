@@ -113,7 +113,7 @@ const Edit_Tour = ({ show, handleClose, tourData, onUpdate }) => {
       });
 
       // Send the PUT request to update the tour
-      await axios.put(`https://www.tripwaly.com/api/tour/update/${tourData._id}`, updatedData, {
+      await axios.put(`http://localhost:8000/api/tour/update/${tourData._id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
       });
 

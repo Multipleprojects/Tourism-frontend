@@ -9,7 +9,7 @@ const Touroperator = () => {
 
   useEffect(() => {
     // Fetch all tour operators from the backend
-    axios.get('https://www.tripwaly.com/api/touroperator/get') // Replace with your actual API endpoint
+    axios.get('http://localhost:8000/api/touroperator/get') // Replace with your actual API endpoint
       .then(response => setTouroperators(response.data))
       .catch(error => console.error('Error fetching touroperators:', error));
   }, []);
@@ -30,7 +30,7 @@ const Touroperator = () => {
 
   const handleUpdateSubmit = () => {
     // Update the selected tour operator
-    axios.put(`https://www.tripwaly.com/api/touroperator/update/${selectedTouroperator._id}`, {
+    axios.put(`http://localhost:8000/api/touroperator/update/${selectedTouroperator._id}`, {
       description: selectedTouroperator.description,
     })
       .then(response => {

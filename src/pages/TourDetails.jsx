@@ -9,7 +9,6 @@ import { setTourid } from "../components/Redux Toolkit/authSlice";
 import Booking from "../components/Booking/Booking";
 import Newsletter from "../shared/Newsletter";
 import Review from "../shared/Review";
-import { backendurl } from "../config/backend";
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -47,7 +46,7 @@ const TourDetails = () => {
 
   const fetchToursAndSchedules = async () => {
     try {
-       const response = await axios.get(`https://www.tripwaly.com/api/tour/schedule/getbyid/${id}`);
+       const response = await axios.get(`http://localhost:8000/api/tour/schedule/getbyid/${id}`);
     
       setTourData(response.data);
     } catch (err) {
@@ -81,7 +80,7 @@ const TourDetails = () => {
             <Col>
               <div className="tour__content">
                 {tourid?.images?.length > 0 && (
-                  <img src={`https://www.tripwaly.com/${tourid.images[0]}`} alt={tourid.images[0]} />
+                  <img src={`${tourid.images[0]}`} alt={tourid.images[0]} />
                 )}
 
                 <div className="tour__info">

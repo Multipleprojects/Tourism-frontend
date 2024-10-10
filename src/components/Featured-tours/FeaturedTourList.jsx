@@ -17,9 +17,9 @@ const FeaturedTourList = () => {
 
   const fetchToursAndSchedules = async () => {
     try {
-      const tourResponse = await axios.get(`https://www.tripwaly.com/api/tour/schedule/get`);
+      const tourResponse = await axios.get(`http://localhost:8000/api/tour/schedule/get`);
 
-//const tourResponse = await axios.get(`https://www.tripwaly.com/api/tour/schedule/get`);
+//const tourResponse = await axios.get(`http://localhost:8000/api/tour/schedule/get`);
 // Filter to get only featured tours
 //const featuredTours = tourResponse.data.filter(tour => tour.featured === true);     
 setTourData(tourResponse.data);  // Set the fetched tours data
@@ -50,9 +50,8 @@ setTourData(tourResponse.data);  // Set the fetched tours data
           <div>
             <span>
               <img
-       src={`https://www.tripwaly.com${tour.tourid.images[0]}`} // Assuming tour.tourid.images[0] contains the image URL
-            //src={`https://www.tripwaly.com${tour.tourid.images[0]}`} // Assuming tour.tourid.images[0] contains the image URL
-   
+       src={`${tour.tourid.images[0]}`} // Assuming tour.tourid.images[0] contains the image URL
+         
                 alt={`Image ${index + 1}`}
                 style={{ width: '19rem', height: '14rem' }}
               />

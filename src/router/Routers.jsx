@@ -18,6 +18,7 @@ import Tour_Gallery from "../components/Admin/Admin_Tour/Tour_Gallery";
 import Create_Touroffer from "../components/Admin/Admin_Tour/Create_Touroffer";
 import Mediia from "../pages/Mediia";
 import Noteligible from "../pages/Noteligible";
+import Create_FAQs from "../components/Admin/Admin_Tour/Create_FAQS";
 
 const Routers = () => {
   return (
@@ -50,8 +51,8 @@ const Routers = () => {
       <Route path="/admin/dashboard/create/tour" element={<Create_Tour />} />
       <Route path="/admin/dashboard/create/tour/schedule" element={<Create_TourSchedule />} />
       <Route path="/admin/dashboard/create/tour/offer" element={<Create_Touroffer />} />
-
       <Route path="/admin/dashboard/create/tour/media" element={<Mediia />} />
+      <Route path="/admin/dashboard/create/tour/faqs" element={<Create_FAQs />} />
     </Routes>
   );
 };

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import './CSS.css'
+import './CSS.css';
+
 const StatisticsList = () => {
   const [statistics, setStatistics] = useState([]);
   const [selectedStatistic, setSelectedStatistic] = useState(null);
@@ -10,8 +11,11 @@ const StatisticsList = () => {
 
   useEffect(() => {
     // Fetch all statistics from the backend
-    axios.get('https://www.tripwaly.com/api/statistic/get')
-      .then(response => setStatistics(response.data))
+    axios.get('http://localhost:8000/api/statistic/get')
+      .then(response => {
+        console.log(response.data); // Log the response to check the data
+        setStatistics(response.data);
+      })
       .catch(error => console.error('Error fetching statistics:', error));
   }, []);
 
@@ -29,7 +33,7 @@ const StatisticsList = () => {
 
   const handleUpdateSubmit = () => {
     // Call backend to update the selected statistic
-    axios.put(`https://www.tripwaly.com/api/statistic/update/${selectedStatistic._id}`, selectedStatistic)
+    axios.put(`http://localhost:8000/api/statistic/update/${selectedStatistic._id}`, selectedStatistic)
       .then(response => {
         setShowModal(false);
         // Optionally, update the statistics list after a successful update
@@ -49,16 +53,21 @@ const StatisticsList = () => {
                 <p className="card-text">Trips: {statistic.successfulTrips}</p>
                 <p className="card-text">Clients: {statistic.regularClients}</p>
                 <p className="card-text">Years Experience: {statistic.yearsExperience}</p>
-                <button className="btn btn-warning text-white" style={{background:'rgb(250,169,53)'}}
-                 onClick={() => handleUpdateClick(statistic)}>Update</button>
+                <button
+                  className="btn btn-warning text-white"
+                  style={{ background: 'rgb(250,169,53)' }}
+                  onClick={() => handleUpdateClick(statistic)}
+                >
+                  Update
+                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-    {/* Bootstrap Modal */}
-    <Modal show={showModal} onHide={() => setShowModal(false)}>
+      {/* Bootstrap Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Update Statistic</Modal.Title>
         </Modal.Header>
@@ -69,7 +78,7 @@ const StatisticsList = () => {
               type="text"
               name="message"
               className="form-control input-focus"
-              value={selectedStatistic.message}
+              value={selectedStatistic ? selectedStatistic.message : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -79,7 +88,7 @@ const StatisticsList = () => {
               type="number"
               name="successfulTrips"
               className="form-control input-focus"
-              value={selectedStatistic.successfulTrips}
+              value={selectedStatistic ? selectedStatistic.successfulTrips : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -89,7 +98,7 @@ const StatisticsList = () => {
               type="number"
               name="regularClients"
               className="form-control input-focus"
-              value={selectedStatistic.regularClients}
+              value={selectedStatistic ? selectedStatistic.regularClients : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -99,7 +108,7 @@ const StatisticsList = () => {
               type="number"
               name="yearsExperience"
               className="form-control input-focus"
-              value={selectedStatistic.yearsExperience}
+              value={selectedStatistic ? selectedStatistic.yearsExperience : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -117,8 +126,8 @@ const StatisticsList = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      </div>
-        );
+    </div>
+  );
 };
 
 export default StatisticsList;

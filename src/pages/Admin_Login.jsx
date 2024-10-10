@@ -24,7 +24,7 @@ const Admin_Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const resAdmin = await axios.post(`https://www.tripwaly.com/api/admin/login`, credentials);
+      const resAdmin = await axios.post(`http://localhost:8000/api/admin/login`, credentials);
       console.log('Response from login:', resAdmin.data); // Log the full response
       
       const { token: userToken, admin } = resAdmin.data;
